@@ -1,0 +1,80 @@
+[
+  {
+    "id": "wf_mq92n1qj_9qvuzx",
+    "docId": "doc_mq8w1bju_ahmk7d",
+    "configId": "cfg_mq92fj1q_f78yn0",
+    "configVersion": 1,
+    "currentStage": "completed",
+    "currentStageName": "已完成",
+    "stages": [
+      {
+        "stageType": "draft",
+        "stageName": "草稿",
+        "approvals": [],
+        "status": "completed",
+        "startedAt": "2026-06-11T05:43:01.003Z",
+        "completedAt": "2026-06-11T05:43:18.732Z"
+      },
+      {
+        "stageType": "first_review",
+        "stageName": "初审",
+        "approvals": [
+          {
+            "id": "apr_mq92nrte_spm4xy",
+            "reviewerId": "user_reviewer1",
+            "reviewerName": "??",
+            "reviewerRole": "reviewer_l1",
+            "decision": "approved",
+            "comment": "????,??????",
+            "decidedAt": "2026-06-11T05:43:34.802Z"
+          }
+        ],
+        "status": "completed",
+        "startedAt": "2026-06-11T05:43:18.732Z",
+        "completedAt": "2026-06-11T05:43:34.804Z"
+      },
+      {
+        "stageType": "second_review",
+        "stageName": "复审",
+        "approvals": [
+          {
+            "id": "apr_mq92o3k7_srayc1",
+            "reviewerId": "user_reviewer2",
+            "reviewerName": "??",
+            "reviewerRole": "reviewer_l2",
+            "decision": "approved",
+            "comment": "????",
+            "decidedAt": "2026-06-11T05:43:50.023Z"
+          }
+        ],
+        "status": "completed",
+        "startedAt": "2026-06-11T05:43:34.804Z",
+        "completedAt": "2026-06-11T05:43:50.026Z"
+      },
+      {
+        "stageType": "final_review",
+        "stageName": "终审",
+        "approvals": [
+          {
+            "id": "apr_mq92oc3n_cpkc4q",
+            "reviewerId": "user_final",
+            "reviewerName": "??",
+            "reviewerRole": "reviewer_final",
+            "decision": "approved",
+            "comment": "????,????",
+            "decidedAt": "2026-06-11T05:44:01.091Z"
+          }
+        ],
+        "status": "completed",
+        "startedAt": "2026-06-11T05:43:50.026Z",
+        "completedAt": "2026-06-11T05:44:01.093Z"
+      }
+    ],
+    "status": "completed",
+    "initiatorId": "user_test",
+    "initiatorName": "????",
+    "createdAt": "2026-06-11T05:43:01.003Z",
+    "updatedAt": "2026-06-11T05:44:01.093Z",
+    "completedAt": "2026-06-11T05:44:01.093Z"
+  }
+]

@@ -4,6 +4,13 @@ import type {
   Annotation,
   ReviewSummary,
   AnnotationStatus,
+  WorkflowConfig,
+  WorkflowInstance,
+  WorkflowProgress,
+  WorkflowTransitionRecord,
+  AuditLogEntry,
+  WorkflowNotification,
+  ReviewerRole,
 } from '../types';
 
 const API_BASE = '/api';
@@ -79,4 +86,68 @@ export const exportApi = {
         'document.md',
       text: await r.text(),
     })),
+};
+
+export const workflowApi = {
+  listConfigs: () => request<WorkflowConfig[]>('/workflow/configs'),
+  getDefaultConfig: () => request<WorkflowConfig>('/workflow/configs/default'),
+  listRoles: () => request<ReviewerRole[]>('/workflow/roles'),
+
+  createInstance: (data: { docId: string; initiatorId: string; initiatorName: string; configId?: string }) =>
+    request<WorkflowInstance>('/workflow/instances', { method: 'POST', body: JSON.stringify(data) }),
+  listInstances: () => request<WorkflowInstance[]>('/workflow/instances'),
+  getInstance: (id: string) => request<WorkflowInstance>(`/workflow/instances/${id}`),
+  getInstanceByDocId: (docId: string) => request<WorkflowInstance>(`/workflow/instances/by-doc/${docId}`),
+  getProgress: (instanceId: string) => request<WorkflowProgress>(`/workflow/instances/${instanceId}/progress`),
+  getTransitions: (instanceId: string) =>
+    request<WorkflowTransitionRecord[]>(`/workflow/instances/${instanceId}/transitions`),
+  getAuditLog: (instanceId: string) =>
+    request<AuditLogEntry[]>(`/workflow/instances/${instanceId}/audit-log`),
+
+  submitForReview: (instanceId: string, data: { operatorId: string; operatorName: string; comment?: string }) =>
+    request<WorkflowInstance>(`/workflow/instances/${instanceId}/submit`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+  approve: (
+    instanceId: string,
+    data: {
+      reviewerId: string;
+      reviewerName: string;
+      reviewerEmail?: string;
+      reviewerRole: string;
+      comment?: string;
+    }
+  ) =>
+    request<WorkflowInstance>(`/workflow/instances/${instanceId}/approve`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+  reject: (
+    instanceId: string,
+    data: {
+      reviewerId: string;
+      reviewerName: string;
+      reviewerEmail?: string;
+      reviewerRole: string;
+      comment?: string;
+    }
+  ) =>
+    request<WorkflowInstance>(`/workflow/instances/${instanceId}/reject`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+  rollback: (instanceId: string, data: { operatorId: string; operatorName: string; comment?: string }) =>
+    request<WorkflowInstance>(`/workflow/instances/${instanceId}/rollback`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  verifyAuditLog: () => request<{ valid: boolean; invalidIndex?: number; message: string }>('/workflow/audit-log/verify'),
+  listAuditLogs: () => request<AuditLogEntry[]>('/workflow/audit-log'),
+
+  listNotifications: (recipientId?: string) =>
+    request<WorkflowNotification[]>(`/workflow/notifications${recipientId ? `?recipientId=${encodeURIComponent(recipientId)}` : ''}`),
+  markNotificationRead: (id: string) =>
+    request<{ success: boolean }>(`/workflow/notifications/${id}/read`, { method: 'POST' }),
 };

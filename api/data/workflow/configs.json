@@ -1,0 +1,95 @@
+[
+  {
+    "id": "cfg_mq92fj1q_f78yn0",
+    "name": "标准四阶段审批流程",
+    "description": "草稿 → 初审 → 复审 → 终审，共四个阶段的标准文档审批流程",
+    "version": 1,
+    "stages": [
+      {
+        "id": "stage_mq92fj1q_gfnc4e",
+        "stageType": "draft",
+        "name": "草稿",
+        "description": "文档创建与编辑阶段",
+        "order": 0,
+        "reviewerRoles": [
+          "author"
+        ],
+        "approvalMode": "any"
+      },
+      {
+        "id": "stage_mq92fj1q_p29xdn",
+        "stageType": "first_review",
+        "name": "初审",
+        "description": "一级审阅人进行初步审核",
+        "order": 1,
+        "reviewerRoles": [
+          "reviewer_l1"
+        ],
+        "approvalMode": "any"
+      },
+      {
+        "id": "stage_mq92fj1q_94x0w4",
+        "stageType": "second_review",
+        "name": "复审",
+        "description": "二级审阅人进行详细审核",
+        "order": 2,
+        "reviewerRoles": [
+          "reviewer_l2"
+        ],
+        "approvalMode": "all",
+        "minApprovalCount": 1
+      },
+      {
+        "id": "stage_mq92fj1q_mjq1s8",
+        "stageType": "final_review",
+        "name": "终审",
+        "description": "终审人进行最终审批",
+        "order": 3,
+        "reviewerRoles": [
+          "reviewer_final"
+        ],
+        "approvalMode": "any"
+      }
+    ],
+    "transitions": [
+      {
+        "fromStage": "draft",
+        "toStage": "first_review",
+        "action": "submit"
+      },
+      {
+        "fromStage": "first_review",
+        "toStage": "second_review",
+        "action": "approve"
+      },
+      {
+        "fromStage": "first_review",
+        "toStage": "draft",
+        "action": "reject"
+      },
+      {
+        "fromStage": "second_review",
+        "toStage": "final_review",
+        "action": "approve"
+      },
+      {
+        "fromStage": "second_review",
+        "toStage": "first_review",
+        "action": "reject"
+      },
+      {
+        "fromStage": "final_review",
+        "toStage": "completed",
+        "action": "approve"
+      },
+      {
+        "fromStage": "final_review",
+        "toStage": "second_review",
+        "action": "reject"
+      }
+    ],
+    "isDefault": true,
+    "createdAt": "2026-06-11T05:37:10.190Z",
+    "updatedAt": "2026-06-11T05:37:10.191Z"
+  }
+]

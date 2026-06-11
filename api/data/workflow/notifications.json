@@ -1,0 +1,52 @@
+[
+  {
+    "id": "notif_mq92nff5_r72ydt",
+    "instanceId": "wf_mq92n1qj_9qvuzx",
+    "docId": "doc_mq8w1bju_ahmk7d",
+    "recipientId": "user_reviewer_l1_0",
+    "recipientName": "reviewer_l1 用户",
+    "type": "stage_assigned",
+    "message": "您被指派为【初审】阶段的审批人，请及时处理。",
+    "stageType": "first_review",
+    "stageName": "初审",
+    "read": false,
+    "createdAt": "2026-06-11T05:43:18.737Z"
+  },
+  {
+    "id": "notif_mq92nrtk_otn7nf",
+    "instanceId": "wf_mq92n1qj_9qvuzx",
+    "docId": "doc_mq8w1bju_ahmk7d",
+    "recipientId": "user_reviewer_l2_0",
+    "recipientName": "reviewer_l2 用户",
+    "type": "stage_assigned",
+    "message": "您被指派为【复审】阶段的审批人，请及时处理。",
+    "stageType": "second_review",
+    "stageName": "复审",
+    "read": false,
+    "createdAt": "2026-06-11T05:43:34.808Z"
+  },
+  {
+    "id": "notif_mq92o3kd_vdvfq8",
+    "instanceId": "wf_mq92n1qj_9qvuzx",
+    "docId": "doc_mq8w1bju_ahmk7d",
+    "recipientId": "user_reviewer_final_0",
+    "recipientName": "reviewer_final 用户",
+    "type": "stage_assigned",
+    "message": "您被指派为【终审】阶段的审批人，请及时处理。",
+    "stageType": "final_review",
+    "stageName": "终审",
+    "read": false,
+    "createdAt": "2026-06-11T05:43:50.029Z"
+  },
+  {
+    "id": "notif_mq92oc3u_tzf8ww",
+    "instanceId": "wf_mq92n1qj_9qvuzx",
+    "docId": "doc_mq8w1bju_ahmk7d",
+    "recipientId": "user_test",
+    "recipientName": "????",
+    "type": "workflow_completed",
+    "message": "您发起的文档审批流程已全部通过，流程完成。",
+    "read": false,
+    "createdAt": "2026-06-11T05:44:01.098Z"
+  }
+]

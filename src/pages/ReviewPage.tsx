@@ -1,16 +1,17 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { FileText, AlertCircle, ArrowLeft } from 'lucide-react';
-import { shareApi, annotationsApi } from '../utils/api';
+import { FileText, AlertCircle, ArrowLeft, Workflow } from 'lucide-react';
+import { shareApi } from '../utils/api';
 import { useReviewStore } from '../store/reviewStore';
-import type { DocumentMeta, ParsedDocument, Annotation } from '../types';
 import { DocumentReader } from '../components/DocumentReader';
 import { ReviewPanel } from '../components/ReviewPanel';
+import { WorkflowPanel } from '../components/WorkflowPanel';
 
 export function ReviewPage() {
   const { token } = useParams<{ token: string }>();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showWorkflow, setShowWorkflow] = useState(true);
 
   const setDocument = useReviewStore((s) => s.setDocument);
   const setParsed = useReviewStore((s) => s.setParsed);
@@ -82,13 +83,30 @@ export function ReviewPage() {
             <p className="text-xs text-slate-500">审阅模式 · 点击段落添加批注</p>
           </div>
         </div>
-        <Link
-          to="/"
-          className="inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-sm text-slate-600 hover:bg-slate-100"
-        >
-          <ArrowLeft size={14} /> 返回
-        </Link>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowWorkflow(!showWorkflow)}
+            className={`inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-sm transition-colors ${
+              showWorkflow ? 'bg-[#1e3a5f]/10 text-[#1e3a5f]' : 'text-slate-600 hover:bg-slate-100'
+            }`}
+          >
+            <Workflow size={14} />
+            {showWorkflow ? '隐藏流程' : '显示流程'}
+          </button>
+          <Link
+            to="/"
+            className="inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-sm text-slate-600 hover:bg-slate-100"
+          >
+            <ArrowLeft size={14} /> 返回
+          </Link>
+        </div>
       </header>
+
+      {showWorkflow && document.id && (
+        <div className="shrink-0 border-b border-slate-200 bg-white px-6 py-4">
+          <WorkflowPanel docId={document.id} />
+        </div>
+      )}
 
       <div className="flex flex-1 min-h-0">
         <main className="flex-1 overflow-y-auto bg-[#fafafa]">

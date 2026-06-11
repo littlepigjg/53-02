@@ -7,7 +7,14 @@ const DATA_DIR = path.resolve(__dirname, '..', 'data');
 const ANNOTATIONS_DIR = path.join(DATA_DIR, 'annotations');
 const PARSED_DIR = path.join(DATA_DIR, 'parsed');
 const UPLOADS_DIR = path.resolve(__dirname, '..', '..', 'uploads');
+const WORKFLOW_DIR = path.join(DATA_DIR, 'workflow');
 const DOCUMENTS_FILE = path.join(DATA_DIR, 'documents.json');
+const WORKFLOW_CONFIGS_FILE = path.join(WORKFLOW_DIR, 'configs.json');
+const WORKFLOW_INSTANCES_FILE = path.join(WORKFLOW_DIR, 'instances.json');
+const WORKFLOW_TRANSITIONS_DIR = path.join(WORKFLOW_DIR, 'transitions');
+const WORKFLOW_AUDIT_LOG_FILE = path.join(WORKFLOW_DIR, 'audit_log.json');
+const WORKFLOW_NOTIFICATIONS_FILE = path.join(WORKFLOW_DIR, 'notifications.json');
+const REVIEWER_ROLES_FILE = path.join(WORKFLOW_DIR, 'reviewer_roles.json');
 
 export class FileStorageService {
   static async ensureDirs() {
@@ -16,12 +23,26 @@ export class FileStorageService {
       fs.mkdir(ANNOTATIONS_DIR, { recursive: true }),
       fs.mkdir(PARSED_DIR, { recursive: true }),
       fs.mkdir(UPLOADS_DIR, { recursive: true }),
+      fs.mkdir(WORKFLOW_DIR, { recursive: true }),
+      fs.mkdir(WORKFLOW_TRANSITIONS_DIR, { recursive: true }),
     ]);
-    try {
-      await fs.access(DOCUMENTS_FILE);
-    } catch {
-      await fs.writeFile(DOCUMENTS_FILE, '[]', 'utf8');
-    }
+    const initFiles: [string, string][] = [
+      [DOCUMENTS_FILE, '[]'],
+      [WORKFLOW_CONFIGS_FILE, '[]'],
+      [WORKFLOW_INSTANCES_FILE, '[]'],
+      [WORKFLOW_AUDIT_LOG_FILE, '[]'],
+      [WORKFLOW_NOTIFICATIONS_FILE, '[]'],
+      [REVIEWER_ROLES_FILE, '[]'],
+    ];
+    await Promise.all(
+      initFiles.map(async ([filePath, defaultContent]) => {
+        try {
+          await fs.access(filePath);
+        } catch {
+          await fs.writeFile(filePath, defaultContent, 'utf8');
+        }
+      })
+    );
   }
 
   static async readJson<T>(filePath: string, defaultValue: T): Promise<T> {
@@ -38,6 +59,12 @@ export class FileStorageService {
     await fs.writeFile(filePath, JSON.stringify(data, null, 2), 'utf8');
   }
 
+  static async appendJson<T>(filePath: string, item: T) {
+    const data = await this.readJson<T[]>(filePath, []);
+    data.push(item);
+    await this.writeJson(filePath, data);
+  }
+
   static getDocumentsPath() {
     return DOCUMENTS_FILE;
   }
@@ -52,6 +79,30 @@ export class FileStorageService {
 
   static getUploadsPath() {
     return UPLOADS_DIR;
+  }
+
+  static getWorkflowConfigsPath() {
+    return WORKFLOW_CONFIGS_FILE;
+  }
+
+  static getWorkflowInstancesPath() {
+    return WORKFLOW_INSTANCES_FILE;
+  }
+
+  static getWorkflowTransitionsPath(instanceId: string) {
+    return path.join(WORKFLOW_TRANSITIONS_DIR, `${instanceId}.json`);
+  }
+
+  static getWorkflowAuditLogPath() {
+    return WORKFLOW_AUDIT_LOG_FILE;
+  }
+
+  static getWorkflowNotificationsPath() {
+    return WORKFLOW_NOTIFICATIONS_FILE;
+  }
+
+  static getReviewerRolesPath() {
+    return REVIEWER_ROLES_FILE;
   }
 
   static async deleteFile(filePath: string) {

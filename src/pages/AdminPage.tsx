@@ -11,6 +11,7 @@ import {
   Wand2,
   MessageSquare,
   Clock,
+  Workflow,
 } from 'lucide-react';
 import { documentsApi, annotationsApi, reviewApi, exportApi } from '../utils/api';
 import type {
@@ -25,6 +26,7 @@ import type {
 import { SummaryStats } from '../components/SummaryStats';
 import { AnnotationCard } from '../components/AnnotationCard';
 import { DocumentReader } from '../components/DocumentReader';
+import { WorkflowPanel } from '../components/WorkflowPanel';
 
 type FilterStatus = 'all' | AnnotationStatus;
 type FilterType = 'all' | AnnotationType;
@@ -42,6 +44,7 @@ export function AdminPage() {
   const [reviewerFilter, setReviewerFilter] = useState<string>('all');
   const [selectedParagraphId, setSelectedParagraphId] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [showWorkflow, setShowWorkflow] = useState(true);
 
   const loadAll = async () => {
     if (!docId) return;
@@ -182,6 +185,15 @@ export function AdminPage() {
           </div>
           <div className="flex items-center gap-2">
             <button
+              onClick={() => setShowWorkflow(!showWorkflow)}
+              className={`inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-sm transition-colors ${
+                showWorkflow ? 'bg-[#1e3a5f]/10 text-[#1e3a5f]' : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+              }`}
+            >
+              <Workflow size={14} />
+              {showWorkflow ? '隐藏流程' : '审批流程'}
+            </button>
+            <button
               onClick={handleCopyShare}
               className="inline-flex items-center gap-1 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50"
             >
@@ -200,6 +212,12 @@ export function AdminPage() {
 
       <main className="mx-auto max-w-7xl px-6 py-6">
         <SummaryStats summary={summary} />
+
+        {showWorkflow && docId && (
+          <div className="mt-6">
+            <WorkflowPanel docId={docId} />
+          </div>
+        )}
 
         <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
           <div className="mb-3 flex items-center gap-2">

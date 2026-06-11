@@ -7,14 +7,17 @@ import shareRouter from './routes/share.js';
 import annotationsRouter from './routes/annotations.js';
 import reviewRouter from './routes/review.js';
 import exportRouter from './routes/export.js';
+import workflowRouter from './routes/workflow.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { FileStorageService } from './services/FileStorageService.js';
+import { WorkflowEngineService } from './services/WorkflowEngineService.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const distDir = path.resolve(__dirname, '..', 'dist');
 const publicDir = path.resolve(__dirname, '..', 'public');
 
 await FileStorageService.ensureDirs();
+await WorkflowEngineService.ensureDefaultConfig();
 
 const app = express();
 
@@ -29,6 +32,7 @@ app.use('/api/share', shareRouter);
 app.use('/api/annotations', annotationsRouter);
 app.use('/api/review', reviewRouter);
 app.use('/api/export', exportRouter);
+app.use('/api/workflow', workflowRouter);
 
 app.get(['/', '/review/*', '/admin/*'], (_req, res) => {
   res.sendFile(path.join(distDir, 'index.html'));
