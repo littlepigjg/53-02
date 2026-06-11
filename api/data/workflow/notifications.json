@@ -48,5 +48,44 @@
     "message": "您发起的文档审批流程已全部通过，流程完成。",
     "read": false,
     "createdAt": "2026-06-11T05:44:01.098Z"
+  },
+  {
+    "id": "notif_mq94sjpk_mbmsva",
+    "instanceId": "wf_mq94sjn3_yp77yo",
+    "docId": "doc_test_countersign_002",
+    "recipientId": "user_reviewer_l1_0",
+    "recipientName": "reviewer_l1 用户",
+    "type": "stage_assigned",
+    "message": "您被指派为【初审】阶段的审批人，请及时处理。",
+    "stageType": "first_review",
+    "stageName": "初审",
+    "read": false,
+    "createdAt": "2026-06-11T06:43:16.808Z"
+  },
+  {
+    "id": "notif_mq94sjri_g8vzan",
+    "instanceId": "wf_mq94sjn3_yp77yo",
+    "docId": "doc_test_countersign_002",
+    "recipientId": "user_reviewer_l2_0",
+    "recipientName": "reviewer_l2 用户",
+    "type": "stage_assigned",
+    "message": "您被指派为【复审】阶段的审批人，请及时处理。",
+    "stageType": "second_review",
+    "stageName": "复审",
+    "read": false,
+    "createdAt": "2026-06-11T06:43:16.878Z"
+  },
+  {
+    "id": "notif_mq94t3rn_7c7nyh",
+    "instanceId": "wf_mq94sjn3_yp77yo",
+    "docId": "doc_test_countersign_002",
+    "recipientId": "user_reviewer_final_0",
+    "recipientName": "reviewer_final 用户",
+    "type": "stage_assigned",
+    "message": "您被指派为【终审】阶段的审批人，请及时处理。",
+    "stageType": "final_review",
+    "stageName": "终审",
+    "read": false,
+    "createdAt": "2026-06-11T06:43:42.803Z"
   }
 ]

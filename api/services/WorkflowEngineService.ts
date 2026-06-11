@@ -1,34 +1,32 @@
 import type {
   WorkflowConfig,
   WorkflowInstance,
-  WorkflowInstanceStage,
   WorkflowStageConfig,
-  WorkflowStageType,
-  WorkflowTransitionRecord,
-  WorkflowProgress,
-  StageApproval,
-  ApprovalMode,
   TransitionAction,
   ReviewerRole,
 } from '../../shared/types.js';
 import { WorkflowStorageService } from './WorkflowStorageService.js';
 import { AuditLogService } from './AuditLogService.js';
 import { NotificationService } from './NotificationService.js';
+import {
+  evaluateApproval,
+  hasRejection,
+  canSubmitApproval,
+} from './approvalRules.js';
+import {
+  createInstanceStages,
+  applyStageTransition,
+  addApprovalToStage,
+  rollbackStage,
+  calculateProgress,
+  canTransition,
+  getStageName,
+  getCurrentStageConfig,
+} from './stateMachine.js';
 
 function genId(prefix: string) {
   return `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
 }
-
-const STAGE_ORDER: WorkflowStageType[] = ['draft', 'first_review', 'second_review', 'final_review', 'completed'];
-
-const STAGE_NAMES: Record<WorkflowStageType, string> = {
-  draft: '草稿',
-  first_review: '初审',
-  second_review: '复审',
-  final_review: '终审',
-  completed: '已完成',
-  rejected: '已驳回',
-};
 
 export class WorkflowEngineService {
   static async ensureDefaultConfig(): Promise<WorkflowConfig> {
@@ -141,16 +139,6 @@ export class WorkflowEngineService {
     if (existing) throw new Error('该文档已存在工作流实例');
 
     const now = new Date().toISOString();
-    const instanceStages: WorkflowInstanceStage[] = config.stages
-      .sort((a, b) => a.order - b.order)
-      .map((s) => ({
-        stageType: s.stageType,
-        stageName: s.name,
-        approvals: [],
-        status: s.stageType === 'draft' ? 'in_progress' : 'pending',
-        startedAt: s.stageType === 'draft' ? now : undefined,
-      }));
-
     const instance: WorkflowInstance = {
       id: genId('wf'),
       docId: params.docId,
@@ -158,7 +146,7 @@ export class WorkflowEngineService {
       configVersion: config.version,
       currentStage: 'draft',
       currentStageName: '草稿',
-      stages: instanceStages,
+      stages: createInstanceStages(config),
       status: 'running',
       initiatorId: params.initiatorId,
       initiatorName: params.initiatorName,
@@ -189,62 +177,34 @@ export class WorkflowEngineService {
     return WorkflowStorageService.getInstanceByDocId(docId);
   }
 
-  static async getProgress(instanceId: string): Promise<WorkflowProgress | null> {
+  static async getProgress(instanceId: string) {
     const instance = await WorkflowStorageService.getInstance(instanceId);
     if (!instance) return null;
 
     const config = await WorkflowStorageService.getConfig(instance.configId);
-    const sortedStages = config?.stages.sort((a, b) => a.order - b.order) || [];
+    if (!config) return null;
 
-    const progressStages = sortedStages.map((s) => {
-      const instStage = instance.stages.find((is) => is.stageType === s.stageType);
-      return {
-        stageType: s.stageType,
-        stageName: s.name,
-        status: instStage?.status || 'pending',
-        order: s.order,
-        approvals: instStage?.approvals || [],
-      };
-    });
-
-    const completedStages = progressStages.filter((s) => s.status === 'completed' || s.status === 'skipped').length;
-    const totalStages = sortedStages.length;
-
-    return {
-      instanceId: instance.id,
-      currentStage: instance.currentStage,
-      currentStageName: instance.currentStageName,
-      totalStages,
-      completedStages,
-      progressPercentage: Math.round((completedStages / totalStages) * 100),
-      stages: progressStages,
-    };
+    return calculateProgress(instance, config);
   }
 
-  static async getTransitionHistory(instanceId: string): Promise<WorkflowTransitionRecord[]> {
-    return WorkflowStorageService.listTransitions(instanceId);
-  }
+  static async getApprovalStatus(instanceId: string) {
+    const instance = await WorkflowStorageService.getInstance(instanceId);
+    if (!instance) return null;
 
-  private static async getStageConfig(instance: WorkflowInstance, stageType: WorkflowStageType): Promise<WorkflowStageConfig | null> {
     const config = await WorkflowStorageService.getConfig(instance.configId);
-    return config?.stages.find((s) => s.stageType === stageType) || null;
+    if (!config) return null;
+
+    const stageConfig = getCurrentStageConfig(config, instance.currentStage);
+    if (!stageConfig) return null;
+
+    const currentStage = instance.stages.find((s) => s.stageType === instance.currentStage);
+    if (!currentStage) return null;
+
+    return evaluateApproval(currentStage.approvals, stageConfig.approvalMode, stageConfig.minApprovalCount);
   }
 
-  private static isStageApprovalComplete(
-    approvals: StageApproval[],
-    mode: ApprovalMode,
-    minCount?: number
-  ): boolean {
-    const approved = approvals.filter((a) => a.decision === 'approved');
-    const rejected = approvals.filter((a) => a.decision === 'rejected');
-    if (rejected.length > 0) return false;
-    if (mode === 'any') return approved.length > 0;
-    const threshold = minCount || approvals.length;
-    return approved.length >= threshold && approvals.every((a) => a.decision === 'approved');
-  }
-
-  private static hasRejection(approvals: StageApproval[]): boolean {
-    return approvals.some((a) => a.decision === 'rejected');
+  static async getTransitionHistory(instanceId: string) {
+    return WorkflowStorageService.listTransitions(instanceId);
   }
 
   static async submitApproval(params: {
@@ -260,73 +220,65 @@ export class WorkflowEngineService {
     if (!instance) throw new Error('工作流实例不存在');
     if (instance.status !== 'running') throw new Error('工作流已结束，无法审批');
 
-    const stageConfig = await this.getStageConfig(instance, instance.currentStage);
+    const config = await WorkflowStorageService.getConfig(instance.configId);
+    if (!config) throw new Error('工作流配置不存在');
+
+    const stageConfig = getCurrentStageConfig(config, instance.currentStage);
     if (!stageConfig) throw new Error('当前阶段配置不存在');
 
     if (!stageConfig.reviewerRoles.includes(params.reviewerRole)) {
       throw new Error(`您的角色（${params.reviewerRole}）无权审批当前阶段`);
     }
 
-    const currentStageIdx = instance.stages.findIndex((s) => s.stageType === instance.currentStage);
-    if (currentStageIdx < 0) throw new Error('当前阶段不存在');
+    const currentStage = instance.stages.find((s) => s.stageType === instance.currentStage);
+    if (!currentStage) throw new Error('当前阶段不存在');
 
-    const now = new Date().toISOString();
-    const currentStage = instance.stages[currentStageIdx];
-
-    const existingApproval = currentStage.approvals.find(
-      (a) => a.reviewerId === params.reviewerId && a.reviewerRole === params.reviewerRole
-    );
+    const submitCheck = canSubmitApproval(currentStage.approvals, params.reviewerId, params.reviewerRole);
+    if (!submitCheck.allowed) {
+      throw new Error(submitCheck.reason || '无法提交审批');
+    }
 
     const beforeState = JSON.parse(JSON.stringify(instance)) as Record<string, unknown>;
 
-    if (existingApproval) {
-      existingApproval.decision = params.decision;
-      existingApproval.comment = params.comment;
-      existingApproval.decidedAt = now;
-    } else {
-      currentStage.approvals.push({
-        id: genId('apr'),
-        reviewerId: params.reviewerId,
-        reviewerName: params.reviewerName,
-        reviewerEmail: params.reviewerEmail,
-        reviewerRole: params.reviewerRole,
-        decision: params.decision,
-        comment: params.comment,
-        decidedAt: now,
-      });
-    }
+    let updated = addApprovalToStage(instance, instance.currentStage, {
+      reviewerId: params.reviewerId,
+      reviewerName: params.reviewerName,
+      reviewerEmail: params.reviewerEmail,
+      reviewerRole: params.reviewerRole,
+      decision: params.decision,
+      comment: params.comment,
+    });
 
     await AuditLogService.createEntry({
       action: 'approval_submit',
       entityType: 'stage_approval',
-      entityId: instance.id,
+      entityId: updated.id,
       operatorId: params.reviewerId,
       operatorName: params.reviewerName,
       beforeState,
-      afterState: instance as unknown as Record<string, unknown>,
+      afterState: updated as unknown as Record<string, unknown>,
       comment: `${params.reviewerName} 在【${currentStage.stageName}】阶段提交了【${params.decision === 'approved' ? '通过' : '驳回'}】的审批意见`,
     });
 
-    const action: TransitionAction = this.hasRejection(currentStage.approvals)
-      ? 'reject'
-      : this.isStageApprovalComplete(currentStage.approvals, stageConfig.approvalMode, stageConfig.minApprovalCount)
-      ? 'approve'
-      : 'submit';
+    const evalResult = evaluateApproval(
+      updated.stages.find((s) => s.stageType === updated.currentStage)!.approvals,
+      stageConfig.approvalMode,
+      stageConfig.minApprovalCount
+    );
 
-    if (action === 'approve' || action === 'reject') {
-      await this.transitionStage({
-        instance,
-        action,
+    if (evalResult.transitionAction === 'approve' || evalResult.transitionAction === 'reject') {
+      updated = await this.transitionStage({
+        instance: updated,
+        action: evalResult.transitionAction as TransitionAction,
         operatorId: params.reviewerId,
         operatorName: params.reviewerName,
-        comment: params.comment,
+        comment: evalResult.reason,
       });
     } else {
-      instance.updatedAt = now;
-      await WorkflowStorageService.saveInstance(instance);
+      await WorkflowStorageService.saveInstance(updated);
     }
 
-    return instance;
+    return updated;
   }
 
   static async submitForReview(params: {
@@ -360,74 +312,52 @@ export class WorkflowEngineService {
     const config = await WorkflowStorageService.getConfig(instance.configId);
     if (!config) throw new Error('工作流配置不存在');
 
-    const beforeState = JSON.parse(JSON.stringify(instance)) as Record<string, unknown>;
-
-    const transition = config.transitions.find(
-      (t) => t.fromStage === instance.currentStage && t.action === action
-    );
-    if (!transition) {
-      throw new Error(`不允许从【${STAGE_NAMES[instance.currentStage]}】执行操作【${action}】`);
+    const transitionCheck = canTransition(config, instance.currentStage, action);
+    if (!transitionCheck.allowed || !transitionCheck.toStage) {
+      throw new Error(transitionCheck.reason || '不允许执行此操作');
     }
 
     const fromStage = instance.currentStage;
-    const toStage = transition.toStage;
-    const now = new Date().toISOString();
+    const toStage = transitionCheck.toStage;
 
-    const currentStageIdx = instance.stages.findIndex((s) => s.stageType === fromStage);
-    if (currentStageIdx >= 0) {
-      instance.stages[currentStageIdx].status = 'completed';
-      instance.stages[currentStageIdx].completedAt = now;
-    }
+    const beforeState = JSON.parse(JSON.stringify(instance)) as Record<string, unknown>;
 
-    const nextStageIdx = instance.stages.findIndex((s) => s.stageType === toStage);
-    if (nextStageIdx >= 0) {
-      instance.stages[nextStageIdx].status = 'in_progress';
-      instance.stages[nextStageIdx].startedAt = now;
-    }
+    let updated = applyStageTransition(instance, fromStage, toStage);
 
-    instance.currentStage = toStage;
-    instance.currentStageName = STAGE_NAMES[toStage] || toStage;
-    instance.updatedAt = now;
+    await WorkflowStorageService.saveInstance(updated);
 
-    if (toStage === 'completed') {
-      instance.status = 'completed';
-      instance.completedAt = now;
-    }
-
-    await WorkflowStorageService.saveInstance(instance);
-
-    const record: WorkflowTransitionRecord = {
+    const record = {
       id: genId('tr'),
-      instanceId: instance.id,
+      instanceId: updated.id,
       fromStage,
       toStage,
       action,
       operatorId,
       operatorName,
       comment,
-      timestamp: now,
+      timestamp: updated.updatedAt,
     };
     await WorkflowStorageService.addTransition(record);
 
     await AuditLogService.createEntry({
       action: 'stage_transition',
       entityType: 'workflow_instance',
-      entityId: instance.id,
+      entityId: updated.id,
       operatorId,
       operatorName,
       beforeState,
-      afterState: instance as unknown as Record<string, unknown>,
-      comment: `从【${STAGE_NAMES[fromStage]}】流转到【${STAGE_NAMES[toStage]}】，操作：${action}`,
+      afterState: updated as unknown as Record<string, unknown>,
+      comment: `从【${getStageName(fromStage)}】流转到【${getStageName(toStage)}】，操作：${action}`,
     });
 
     if (toStage === 'completed') {
-      await NotificationService.notifyWorkflowCompleted(instance, instance.initiatorId, instance.initiatorName);
+      await NotificationService.notifyWorkflowCompleted(updated, updated.initiatorId, updated.initiatorName);
     } else if (action === 'reject') {
       await NotificationService.notifyWorkflowRejected(
-        instance,
-        instance.initiatorId,
-        instance.initiatorName,
-        STAGE_NAMES[fromStage]
+        updated,
+        updated.initiatorId,
+        updated.initiatorName,
+        getStageName(fromStage)
       );
     } else {
       const nextStageConfig = config.stages.find((s) => s.stageType === toStage);
@@ -437,11 +367,11 @@ export class WorkflowEngineService {
           name: `${roleId} 用户`,
           email: undefined,
         }));
-        await NotificationService.notifyStageAssigned(instance, recipients);
+        await NotificationService.notifyStageAssigned(updated, recipients);
       }
     }
 
-    return instance;
+    return updated;
   }
 
   static async rollback(params: {
@@ -454,59 +384,48 @@ export class WorkflowEngineService {
     if (!instance) throw new Error('工作流实例不存在');
     if (instance.status !== 'running') throw new Error('工作流已结束');
 
-    const currentOrder = STAGE_ORDER.indexOf(instance.currentStage);
-    if (currentOrder <= 0) throw new Error('当前已是第一阶段，无法回退');
+    const transitionCheck = canTransition(
+      { transitions: [] } as unknown as WorkflowConfig,
+      instance.currentStage,
+      'rollback'
+    );
+    if (!transitionCheck.allowed || !transitionCheck.toStage) {
+      throw new Error(transitionCheck.reason || '无法回退');
+    }
 
-    const prevStage = STAGE_ORDER[currentOrder - 1];
+    const fromStage = instance.currentStage;
+    const toStage = transitionCheck.toStage;
     const beforeState = JSON.parse(JSON.stringify(instance)) as Record<string, unknown>;
-    const now = new Date().toISOString();
 
-    const currentStageIdx = instance.stages.findIndex((s) => s.stageType === instance.currentStage);
-    if (currentStageIdx >= 0) {
-      instance.stages[currentStageIdx].status = 'pending';
-      instance.stages[currentStageIdx].approvals = [];
-      instance.stages[currentStageIdx].startedAt = undefined;
-      instance.stages[currentStageIdx].completedAt = undefined;
-    }
+    let updated = rollbackStage(instance, toStage);
 
-    const prevStageIdx = instance.stages.findIndex((s) => s.stageType === prevStage);
-    if (prevStageIdx >= 0) {
-      instance.stages[prevStageIdx].status = 'in_progress';
-      instance.stages[prevStageIdx].startedAt = now;
-      instance.stages[prevStageIdx].completedAt = undefined;
-    }
+    await WorkflowStorageService.saveInstance(updated);
 
-    instance.currentStage = prevStage;
-    instance.currentStageName = STAGE_NAMES[prevStage] || prevStage;
-    instance.updatedAt = now;
-
-    await WorkflowStorageService.saveInstance(instance);
-
-    const record: WorkflowTransitionRecord = {
+    const record = {
       id: genId('tr'),
-      instanceId: instance.id,
-      fromStage: STAGE_ORDER[currentOrder],
-      toStage: prevStage,
-      action: 'rollback',
+      instanceId: updated.id,
+      fromStage,
+      toStage,
+      action: 'rollback' as const,
       operatorId: params.operatorId,
       operatorName: params.operatorName,
       comment: params.comment,
-      timestamp: now,
+      timestamp: updated.updatedAt,
     };
     await WorkflowStorageService.addTransition(record);
 
     await AuditLogService.createEntry({
       action: 'stage_transition',
       entityType: 'workflow_instance',
-      entityId: instance.id,
+      entityId: updated.id,
       operatorId: params.operatorId,
       operatorName: params.operatorName,
       beforeState,
-      afterState: instance as unknown as Record<string, unknown>,
-      comment: `手动回退：从【${STAGE_NAMES[STAGE_ORDER[currentOrder]]}】回退到【${STAGE_NAMES[prevStage]}】`,
+      afterState: updated as unknown as Record<string, unknown>,
+      comment: `手动回退：从【${getStageName(fromStage)}】回退到【${getStageName(toStage)}】`,
     });
 
-    return instance;
+    return updated;
   }
 
   static async listInstances(): Promise<WorkflowInstance[]> {

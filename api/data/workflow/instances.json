@@ -76,5 +76,111 @@
     "createdAt": "2026-06-11T05:43:01.003Z",
     "updatedAt": "2026-06-11T05:44:01.093Z",
     "completedAt": "2026-06-11T05:44:01.093Z"
+  },
+  {
+    "id": "wf_mq94rrjw_zc4q89",
+    "docId": "doc_test_countersign_001",
+    "configId": "cfg_mq92fj1q_f78yn0",
+    "configVersion": 1,
+    "currentStage": "draft",
+    "currentStageName": "草稿",
+    "stages": [
+      {
+        "stageType": "draft",
+        "stageName": "草稿",
+        "approvals": [],
+        "status": "in_progress",
+        "startedAt": "2026-06-11T06:42:40.316Z"
+      },
+      {
+        "stageType": "first_review",
+        "stageName": "初审",
+        "approvals": [],
+        "status": "pending"
+      },
+      {
+        "stageType": "second_review",
+        "stageName": "复审",
+        "approvals": [],
+        "status": "pending"
+      },
+      {
+        "stageType": "final_review",
+        "stageName": "终审",
+        "approvals": [],
+        "status": "pending"
+      }
+    ],
+    "status": "running",
+    "initiatorId": "user_test",
+    "initiatorName": "????",
+    "createdAt": "2026-06-11T06:42:40.316Z",
+    "updatedAt": "2026-06-11T06:42:40.316Z"
+  },
+  {
+    "id": "wf_mq94sjn3_yp77yo",
+    "docId": "doc_test_countersign_002",
+    "configId": "cfg_mq92fj1q_f78yn0",
+    "configVersion": 1,
+    "currentStage": "final_review",
+    "currentStageName": "终审",
+    "stages": [
+      {
+        "stageType": "draft",
+        "stageName": "草稿",
+        "approvals": [],
+        "status": "completed",
+        "startedAt": "2026-06-11T06:43:16.719Z",
+        "completedAt": "2026-06-11T06:43:16.792Z"
+      },
+      {
+        "stageType": "first_review",
+        "stageName": "初审",
+        "approvals": [
+          {
+            "reviewerId": "user_reviewer1",
+            "reviewerName": "??",
+            "reviewerRole": "reviewer_l1",
+            "decision": "approved",
+            "comment": "????",
+            "id": "apr_mq94sjqf_i0qrx8",
+            "decidedAt": "2026-06-11T06:43:16.839Z"
+          }
+        ],
+        "status": "completed",
+        "startedAt": "2026-06-11T06:43:16.792Z",
+        "completedAt": "2026-06-11T06:43:16.847Z"
+      },
+      {
+        "stageType": "second_review",
+        "stageName": "复审",
+        "approvals": [
+          {
+            "reviewerId": "user_reviewer2",
+            "reviewerName": "??",
+            "reviewerRole": "reviewer_l2",
+            "decision": "approved",
+            "comment": "????,?????",
+            "id": "apr_mq94t3re_9xvnqd",
+            "decidedAt": "2026-06-11T06:43:42.794Z"
+          }
+        ],
+        "status": "completed",
+        "startedAt": "2026-06-11T06:43:16.847Z",
+        "completedAt": "2026-06-11T06:43:42.798Z"
+      },
+      {
+        "stageType": "final_review",
+        "stageName": "终审",
+        "approvals": [],
+        "status": "in_progress",
+        "startedAt": "2026-06-11T06:43:42.798Z"
+      }
+    ],
+    "status": "running",
+    "initiatorId": "user_test",
+    "initiatorName": "????",
+    "createdAt": "2026-06-11T06:43:16.719Z",
+    "updatedAt": "2026-06-11T06:43:42.798Z"
   }
 ]

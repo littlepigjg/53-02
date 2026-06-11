@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
-import { Loader2, AlertCircle, Plus, RefreshCw } from 'lucide-react';
+import { useState } from 'react';
+import { Loader2, AlertCircle, Plus } from 'lucide-react';
 import { WorkflowProgressBar } from './WorkflowProgressBar';
 import { WorkflowHistory } from './WorkflowHistory';
 import { WorkflowControlPanel } from './WorkflowControlPanel';
-import { useWorkflowStore } from '../store/workflowStore';
+import { useWorkflow } from '../hooks/useWorkflow';
 import { useReviewStore } from '../store/reviewStore';
 
 interface WorkflowPanelProps {
@@ -18,41 +18,15 @@ export function WorkflowPanel({ docId }: WorkflowPanelProps) {
     roles,
     loading,
     error,
-    fetchInstanceByDocId,
-    fetchProgress,
-    fetchTransitions,
-    fetchRoles,
     createInstance,
-    clear,
-    setError,
-  } = useWorkflowStore();
+    clearAll,
+    clearError,
+  } = useWorkflow({ docId, autoLoad: true });
 
   const reviewerName = useReviewStore((s) => s.reviewerName);
   const setReviewerName = useReviewStore((s) => s.setReviewerName);
   const [creating, setCreating] = useState(false);
   const [localName, setLocalName] = useState('');
-
-  useEffect(() => {
-    let alive = true;
-    (async () => {
-      if (!docId) return;
-      clear();
-      setError(null);
-      try {
-        const inst = await fetchInstanceByDocId(docId);
-        if (!alive) return;
-        if (inst) {
-          await Promise.all([fetchProgress(inst.id), fetchTransitions(inst.id)]);
-        }
-        await fetchRoles();
-      } catch {
-        // ignore 404 - instance not created yet
-      }
-    })();
-    return () => {
-      alive = false;
-    };
-  }, [docId, fetchInstanceByDocId, fetchProgress, fetchTransitions, fetchRoles, clear, setError]);
 
   const handleCreate = async () => {
     const name = reviewerName.trim() || localName.trim();
@@ -64,13 +38,13 @@ export function WorkflowPanel({ docId }: WorkflowPanelProps) {
       setReviewerName(localName.trim());
     }
     setCreating(true);
+    clearError();
     try {
-      const inst = await createInstance({
+      await createInstance({
         docId,
         initiatorId: `user_${name}`,
         initiatorName: name,
       });
-      await Promise.all([fetchProgress(inst.id), fetchTransitions(inst.id)]);
     } catch (e) {
       alert((e as Error).message);
     } finally {
@@ -113,7 +87,9 @@ export function WorkflowPanel({ docId }: WorkflowPanelProps) {
       <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
         <div className="flex flex-col items-center text-center">
           <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-slate-100">
-            <RefreshCw size={20} className="text-slate-400" />
+            <svg className="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+            </svg>
           </div>
           <h3 className="text-sm font-semibold text-slate-800">尚未启动审批流程</h3>
           <p className="mt-1 text-xs text-slate-500">启动后将进入「草稿」阶段，可提交审核</p>

@@ -1,0 +1,35 @@
+[
+  {
+    "id": "tr_mq94sjp7_b1wkw1",
+    "instanceId": "wf_mq94sjn3_yp77yo",
+    "fromStage": "draft",
+    "toStage": "first_review",
+    "action": "submit",
+    "operatorId": "user_test",
+    "operatorName": "????",
+    "comment": "????",
+    "timestamp": "2026-06-11T06:43:16.792Z"
+  },
+  {
+    "id": "tr_mq94sjqp_yqm0lr",
+    "instanceId": "wf_mq94sjn3_yp77yo",
+    "fromStage": "first_review",
+    "toStage": "second_review",
+    "action": "approve",
+    "operatorId": "user_reviewer1",
+    "operatorName": "??",
+    "comment": "或签模式：已有 1 人通过",
+    "timestamp": "2026-06-11T06:43:16.847Z"
+  },
+  {
+    "id": "tr_mq94t3rj_pac52q",
+    "instanceId": "wf_mq94sjn3_yp77yo",
+    "fromStage": "second_review",
+    "toStage": "final_review",
+    "action": "approve",
+    "operatorId": "user_reviewer2",
+    "operatorName": "??",
+    "comment": "会签模式：已满足最少通过人数 1/1",
+    "timestamp": "2026-06-11T06:43:42.798Z"
+  }
+]

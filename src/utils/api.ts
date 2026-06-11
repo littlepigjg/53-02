@@ -99,6 +99,12 @@ export const workflowApi = {
   getInstance: (id: string) => request<WorkflowInstance>(`/workflow/instances/${id}`),
   getInstanceByDocId: (docId: string) => request<WorkflowInstance>(`/workflow/instances/by-doc/${docId}`),
   getProgress: (instanceId: string) => request<WorkflowProgress>(`/workflow/instances/${instanceId}/progress`),
+  getApprovalStatus: (instanceId: string) => request<{
+    canTransition: boolean;
+    transitionAction: string | null;
+    reason: string;
+    stats: { total: number; approved: number; rejected: number; pending: number };
+  }>(`/workflow/instances/${instanceId}/approval-status`),
   getTransitions: (instanceId: string) =>
     request<WorkflowTransitionRecord[]>(`/workflow/instances/${instanceId}/transitions`),
   getAuditLog: (instanceId: string) =>

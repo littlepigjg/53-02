@@ -1064,5 +1064,699 @@
     "comment": "从【终审】流转到【已完成】，操作：approve",
     "previousHash": "7611d446c49fed3a9679620333f6127cf9b5a16a441d0c9f76749421c2d1a670",
     "hash": "d27af86a1e207d7e6fa51fb657a863d47887ebf4059ac3e18f0fe898d5481fc6"
+  },
+  {
+    "id": "log_mq94rrk1_u54yzs",
+    "timestamp": "2026-06-11T06:42:40.321Z",
+    "action": "instance_create",
+    "entityType": "workflow_instance",
+    "entityId": "wf_mq94rrjw_zc4q89",
+    "operatorId": "user_test",
+    "operatorName": "????",
+    "afterState": {
+      "id": "wf_mq94rrjw_zc4q89",
+      "docId": "doc_test_countersign_001",
+      "configId": "cfg_mq92fj1q_f78yn0",
+      "configVersion": 1,
+      "currentStage": "draft",
+      "currentStageName": "草稿",
+      "stages": [
+        {
+          "stageType": "draft",
+          "stageName": "草稿",
+          "approvals": [],
+          "status": "in_progress",
+          "startedAt": "2026-06-11T06:42:40.316Z"
+        },
+        {
+          "stageType": "first_review",
+          "stageName": "初审",
+          "approvals": [],
+          "status": "pending"
+        },
+        {
+          "stageType": "second_review",
+          "stageName": "复审",
+          "approvals": [],
+          "status": "pending"
+        },
+        {
+          "stageType": "final_review",
+          "stageName": "终审",
+          "approvals": [],
+          "status": "pending"
+        }
+      ],
+      "status": "running",
+      "initiatorId": "user_test",
+      "initiatorName": "????",
+      "createdAt": "2026-06-11T06:42:40.316Z",
+      "updatedAt": "2026-06-11T06:42:40.316Z"
+    },
+    "comment": "创建工作流实例",
+    "previousHash": "d27af86a1e207d7e6fa51fb657a863d47887ebf4059ac3e18f0fe898d5481fc6",
+    "hash": "425a16142963761db4aa1b91c412ad349240179d08dd5d161df5e3461507bef0"
+  },
+  {
+    "id": "log_mq94sjn7_ynbp0n",
+    "timestamp": "2026-06-11T06:43:16.723Z",
+    "action": "instance_create",
+    "entityType": "workflow_instance",
+    "entityId": "wf_mq94sjn3_yp77yo",
+    "operatorId": "user_test",
+    "operatorName": "????",
+    "afterState": {
+      "id": "wf_mq94sjn3_yp77yo",
+      "docId": "doc_test_countersign_002",
+      "configId": "cfg_mq92fj1q_f78yn0",
+      "configVersion": 1,
+      "currentStage": "draft",
+      "currentStageName": "草稿",
+      "stages": [
+        {
+          "stageType": "draft",
+          "stageName": "草稿",
+          "approvals": [],
+          "status": "in_progress",
+          "startedAt": "2026-06-11T06:43:16.719Z"
+        },
+        {
+          "stageType": "first_review",
+          "stageName": "初审",
+          "approvals": [],
+          "status": "pending"
+        },
+        {
+          "stageType": "second_review",
+          "stageName": "复审",
+          "approvals": [],
+          "status": "pending"
+        },
+        {
+          "stageType": "final_review",
+          "stageName": "终审",
+          "approvals": [],
+          "status": "pending"
+        }
+      ],
+      "status": "running",
+      "initiatorId": "user_test",
+      "initiatorName": "????",
+      "createdAt": "2026-06-11T06:43:16.719Z",
+      "updatedAt": "2026-06-11T06:43:16.719Z"
+    },
+    "comment": "创建工作流实例",
+    "previousHash": "425a16142963761db4aa1b91c412ad349240179d08dd5d161df5e3461507bef0",
+    "hash": "ed1835c820dde2bb95c846a7788c0341349268c775b7bbd119ee237e330ba26a"
+  },
+  {
+    "id": "log_mq94sjpf_6uoga8",
+    "timestamp": "2026-06-11T06:43:16.803Z",
+    "action": "stage_transition",
+    "entityType": "workflow_instance",
+    "entityId": "wf_mq94sjn3_yp77yo",
+    "operatorId": "user_test",
+    "operatorName": "????",
+    "beforeState": {
+      "id": "wf_mq94sjn3_yp77yo",
+      "docId": "doc_test_countersign_002",
+      "configId": "cfg_mq92fj1q_f78yn0",
+      "configVersion": 1,
+      "currentStage": "draft",
+      "currentStageName": "草稿",
+      "stages": [
+        {
+          "stageType": "draft",
+          "stageName": "草稿",
+          "approvals": [],
+          "status": "in_progress",
+          "startedAt": "2026-06-11T06:43:16.719Z"
+        },
+        {
+          "stageType": "first_review",
+          "stageName": "初审",
+          "approvals": [],
+          "status": "pending"
+        },
+        {
+          "stageType": "second_review",
+          "stageName": "复审",
+          "approvals": [],
+          "status": "pending"
+        },
+        {
+          "stageType": "final_review",
+          "stageName": "终审",
+          "approvals": [],
+          "status": "pending"
+        }
+      ],
+      "status": "running",
+      "initiatorId": "user_test",
+      "initiatorName": "????",
+      "createdAt": "2026-06-11T06:43:16.719Z",
+      "updatedAt": "2026-06-11T06:43:16.719Z"
+    },
+    "afterState": {
+      "id": "wf_mq94sjn3_yp77yo",
+      "docId": "doc_test_countersign_002",
+      "configId": "cfg_mq92fj1q_f78yn0",
+      "configVersion": 1,
+      "currentStage": "first_review",
+      "currentStageName": "初审",
+      "stages": [
+        {
+          "stageType": "draft",
+          "stageName": "草稿",
+          "approvals": [],
+          "status": "completed",
+          "startedAt": "2026-06-11T06:43:16.719Z",
+          "completedAt": "2026-06-11T06:43:16.792Z"
+        },
+        {
+          "stageType": "first_review",
+          "stageName": "初审",
+          "approvals": [],
+          "status": "in_progress",
+          "startedAt": "2026-06-11T06:43:16.792Z"
+        },
+        {
+          "stageType": "second_review",
+          "stageName": "复审",
+          "approvals": [],
+          "status": "pending"
+        },
+        {
+          "stageType": "final_review",
+          "stageName": "终审",
+          "approvals": [],
+          "status": "pending"
+        }
+      ],
+      "status": "running",
+      "initiatorId": "user_test",
+      "initiatorName": "????",
+      "createdAt": "2026-06-11T06:43:16.719Z",
+      "updatedAt": "2026-06-11T06:43:16.792Z"
+    },
+    "comment": "从【草稿】流转到【初审】，操作：submit",
+    "previousHash": "ed1835c820dde2bb95c846a7788c0341349268c775b7bbd119ee237e330ba26a",
+    "hash": "ca7959b794db9b6c810167dc23a1fe95015a35f854f6c7816e90c423ee703f03"
+  },
+  {
+    "id": "log_mq94sjqg_s9hnv1",
+    "timestamp": "2026-06-11T06:43:16.840Z",
+    "action": "approval_submit",
+    "entityType": "stage_approval",
+    "entityId": "wf_mq94sjn3_yp77yo",
+    "operatorId": "user_reviewer1",
+    "operatorName": "??",
+    "beforeState": {
+      "id": "wf_mq94sjn3_yp77yo",
+      "docId": "doc_test_countersign_002",
+      "configId": "cfg_mq92fj1q_f78yn0",
+      "configVersion": 1,
+      "currentStage": "first_review",
+      "currentStageName": "初审",
+      "stages": [
+        {
+          "stageType": "draft",
+          "stageName": "草稿",
+          "approvals": [],
+          "status": "completed",
+          "startedAt": "2026-06-11T06:43:16.719Z",
+          "completedAt": "2026-06-11T06:43:16.792Z"
+        },
+        {
+          "stageType": "first_review",
+          "stageName": "初审",
+          "approvals": [],
+          "status": "in_progress",
+          "startedAt": "2026-06-11T06:43:16.792Z"
+        },
+        {
+          "stageType": "second_review",
+          "stageName": "复审",
+          "approvals": [],
+          "status": "pending"
+        },
+        {
+          "stageType": "final_review",
+          "stageName": "终审",
+          "approvals": [],
+          "status": "pending"
+        }
+      ],
+      "status": "running",
+      "initiatorId": "user_test",
+      "initiatorName": "????",
+      "createdAt": "2026-06-11T06:43:16.719Z",
+      "updatedAt": "2026-06-11T06:43:16.792Z"
+    },
+    "afterState": {
+      "id": "wf_mq94sjn3_yp77yo",
+      "docId": "doc_test_countersign_002",
+      "configId": "cfg_mq92fj1q_f78yn0",
+      "configVersion": 1,
+      "currentStage": "first_review",
+      "currentStageName": "初审",
+      "stages": [
+        {
+          "stageType": "draft",
+          "stageName": "草稿",
+          "approvals": [],
+          "status": "completed",
+          "startedAt": "2026-06-11T06:43:16.719Z",
+          "completedAt": "2026-06-11T06:43:16.792Z"
+        },
+        {
+          "stageType": "first_review",
+          "stageName": "初审",
+          "approvals": [
+            {
+              "reviewerId": "user_reviewer1",
+              "reviewerName": "??",
+              "reviewerRole": "reviewer_l1",
+              "decision": "approved",
+              "comment": "????",
+              "id": "apr_mq94sjqf_i0qrx8",
+              "decidedAt": "2026-06-11T06:43:16.839Z"
+            }
+          ],
+          "status": "in_progress",
+          "startedAt": "2026-06-11T06:43:16.792Z"
+        },
+        {
+          "stageType": "second_review",
+          "stageName": "复审",
+          "approvals": [],
+          "status": "pending"
+        },
+        {
+          "stageType": "final_review",
+          "stageName": "终审",
+          "approvals": [],
+          "status": "pending"
+        }
+      ],
+      "status": "running",
+      "initiatorId": "user_test",
+      "initiatorName": "????",
+      "createdAt": "2026-06-11T06:43:16.719Z",
+      "updatedAt": "2026-06-11T06:43:16.839Z"
+    },
+    "comment": "?? 在【初审】阶段提交了【通过】的审批意见",
+    "previousHash": "ca7959b794db9b6c810167dc23a1fe95015a35f854f6c7816e90c423ee703f03",
+    "hash": "ec9c3eb996c040f3f1c69851cb3b5b91fe1e28fc741c93d97b6d1cfe8867b42a"
+  },
+  {
+    "id": "log_mq94sjrc_84c0x1",
+    "timestamp": "2026-06-11T06:43:16.872Z",
+    "action": "stage_transition",
+    "entityType": "workflow_instance",
+    "entityId": "wf_mq94sjn3_yp77yo",
+    "operatorId": "user_reviewer1",
+    "operatorName": "??",
+    "beforeState": {
+      "id": "wf_mq94sjn3_yp77yo",
+      "docId": "doc_test_countersign_002",
+      "configId": "cfg_mq92fj1q_f78yn0",
+      "configVersion": 1,
+      "currentStage": "first_review",
+      "currentStageName": "初审",
+      "stages": [
+        {
+          "stageType": "draft",
+          "stageName": "草稿",
+          "approvals": [],
+          "status": "completed",
+          "startedAt": "2026-06-11T06:43:16.719Z",
+          "completedAt": "2026-06-11T06:43:16.792Z"
+        },
+        {
+          "stageType": "first_review",
+          "stageName": "初审",
+          "approvals": [
+            {
+              "reviewerId": "user_reviewer1",
+              "reviewerName": "??",
+              "reviewerRole": "reviewer_l1",
+              "decision": "approved",
+              "comment": "????",
+              "id": "apr_mq94sjqf_i0qrx8",
+              "decidedAt": "2026-06-11T06:43:16.839Z"
+            }
+          ],
+          "status": "in_progress",
+          "startedAt": "2026-06-11T06:43:16.792Z"
+        },
+        {
+          "stageType": "second_review",
+          "stageName": "复审",
+          "approvals": [],
+          "status": "pending"
+        },
+        {
+          "stageType": "final_review",
+          "stageName": "终审",
+          "approvals": [],
+          "status": "pending"
+        }
+      ],
+      "status": "running",
+      "initiatorId": "user_test",
+      "initiatorName": "????",
+      "createdAt": "2026-06-11T06:43:16.719Z",
+      "updatedAt": "2026-06-11T06:43:16.839Z"
+    },
+    "afterState": {
+      "id": "wf_mq94sjn3_yp77yo",
+      "docId": "doc_test_countersign_002",
+      "configId": "cfg_mq92fj1q_f78yn0",
+      "configVersion": 1,
+      "currentStage": "second_review",
+      "currentStageName": "复审",
+      "stages": [
+        {
+          "stageType": "draft",
+          "stageName": "草稿",
+          "approvals": [],
+          "status": "completed",
+          "startedAt": "2026-06-11T06:43:16.719Z",
+          "completedAt": "2026-06-11T06:43:16.792Z"
+        },
+        {
+          "stageType": "first_review",
+          "stageName": "初审",
+          "approvals": [
+            {
+              "reviewerId": "user_reviewer1",
+              "reviewerName": "??",
+              "reviewerRole": "reviewer_l1",
+              "decision": "approved",
+              "comment": "????",
+              "id": "apr_mq94sjqf_i0qrx8",
+              "decidedAt": "2026-06-11T06:43:16.839Z"
+            }
+          ],
+          "status": "completed",
+          "startedAt": "2026-06-11T06:43:16.792Z",
+          "completedAt": "2026-06-11T06:43:16.847Z"
+        },
+        {
+          "stageType": "second_review",
+          "stageName": "复审",
+          "approvals": [],
+          "status": "in_progress",
+          "startedAt": "2026-06-11T06:43:16.847Z"
+        },
+        {
+          "stageType": "final_review",
+          "stageName": "终审",
+          "approvals": [],
+          "status": "pending"
+        }
+      ],
+      "status": "running",
+      "initiatorId": "user_test",
+      "initiatorName": "????",
+      "createdAt": "2026-06-11T06:43:16.719Z",
+      "updatedAt": "2026-06-11T06:43:16.847Z"
+    },
+    "comment": "从【初审】流转到【复审】，操作：approve",
+    "previousHash": "ec9c3eb996c040f3f1c69851cb3b5b91fe1e28fc741c93d97b6d1cfe8867b42a",
+    "hash": "9442b2069fa77cee7be4b6857773829afbfc9e3a894537395ec0b34d0e78b001"
+  },
+  {
+    "id": "log_mq94t3rf_z3vr0f",
+    "timestamp": "2026-06-11T06:43:42.795Z",
+    "action": "approval_submit",
+    "entityType": "stage_approval",
+    "entityId": "wf_mq94sjn3_yp77yo",
+    "operatorId": "user_reviewer2",
+    "operatorName": "??",
+    "beforeState": {
+      "id": "wf_mq94sjn3_yp77yo",
+      "docId": "doc_test_countersign_002",
+      "configId": "cfg_mq92fj1q_f78yn0",
+      "configVersion": 1,
+      "currentStage": "second_review",
+      "currentStageName": "复审",
+      "stages": [
+        {
+          "stageType": "draft",
+          "stageName": "草稿",
+          "approvals": [],
+          "status": "completed",
+          "startedAt": "2026-06-11T06:43:16.719Z",
+          "completedAt": "2026-06-11T06:43:16.792Z"
+        },
+        {
+          "stageType": "first_review",
+          "stageName": "初审",
+          "approvals": [
+            {
+              "reviewerId": "user_reviewer1",
+              "reviewerName": "??",
+              "reviewerRole": "reviewer_l1",
+              "decision": "approved",
+              "comment": "????",
+              "id": "apr_mq94sjqf_i0qrx8",
+              "decidedAt": "2026-06-11T06:43:16.839Z"
+            }
+          ],
+          "status": "completed",
+          "startedAt": "2026-06-11T06:43:16.792Z",
+          "completedAt": "2026-06-11T06:43:16.847Z"
+        },
+        {
+          "stageType": "second_review",
+          "stageName": "复审",
+          "approvals": [],
+          "status": "in_progress",
+          "startedAt": "2026-06-11T06:43:16.847Z"
+        },
+        {
+          "stageType": "final_review",
+          "stageName": "终审",
+          "approvals": [],
+          "status": "pending"
+        }
+      ],
+      "status": "running",
+      "initiatorId": "user_test",
+      "initiatorName": "????",
+      "createdAt": "2026-06-11T06:43:16.719Z",
+      "updatedAt": "2026-06-11T06:43:16.847Z"
+    },
+    "afterState": {
+      "id": "wf_mq94sjn3_yp77yo",
+      "docId": "doc_test_countersign_002",
+      "configId": "cfg_mq92fj1q_f78yn0",
+      "configVersion": 1,
+      "currentStage": "second_review",
+      "currentStageName": "复审",
+      "stages": [
+        {
+          "stageType": "draft",
+          "stageName": "草稿",
+          "approvals": [],
+          "status": "completed",
+          "startedAt": "2026-06-11T06:43:16.719Z",
+          "completedAt": "2026-06-11T06:43:16.792Z"
+        },
+        {
+          "stageType": "first_review",
+          "stageName": "初审",
+          "approvals": [
+            {
+              "reviewerId": "user_reviewer1",
+              "reviewerName": "??",
+              "reviewerRole": "reviewer_l1",
+              "decision": "approved",
+              "comment": "????",
+              "id": "apr_mq94sjqf_i0qrx8",
+              "decidedAt": "2026-06-11T06:43:16.839Z"
+            }
+          ],
+          "status": "completed",
+          "startedAt": "2026-06-11T06:43:16.792Z",
+          "completedAt": "2026-06-11T06:43:16.847Z"
+        },
+        {
+          "stageType": "second_review",
+          "stageName": "复审",
+          "approvals": [
+            {
+              "reviewerId": "user_reviewer2",
+              "reviewerName": "??",
+              "reviewerRole": "reviewer_l2",
+              "decision": "approved",
+              "comment": "????,?????",
+              "id": "apr_mq94t3re_9xvnqd",
+              "decidedAt": "2026-06-11T06:43:42.794Z"
+            }
+          ],
+          "status": "in_progress",
+          "startedAt": "2026-06-11T06:43:16.847Z"
+        },
+        {
+          "stageType": "final_review",
+          "stageName": "终审",
+          "approvals": [],
+          "status": "pending"
+        }
+      ],
+      "status": "running",
+      "initiatorId": "user_test",
+      "initiatorName": "????",
+      "createdAt": "2026-06-11T06:43:16.719Z",
+      "updatedAt": "2026-06-11T06:43:42.794Z"
+    },
+    "comment": "?? 在【复审】阶段提交了【通过】的审批意见",
+    "previousHash": "9442b2069fa77cee7be4b6857773829afbfc9e3a894537395ec0b34d0e78b001",
+    "hash": "eff08575f1ab84671a2072e61f6e0d5b85fbfee09a6e77056fdb28f7bb8def5d"
+  },
+  {
+    "id": "log_mq94t3rl_a0jrmv",
+    "timestamp": "2026-06-11T06:43:42.801Z",
+    "action": "stage_transition",
+    "entityType": "workflow_instance",
+    "entityId": "wf_mq94sjn3_yp77yo",
+    "operatorId": "user_reviewer2",
+    "operatorName": "??",
+    "beforeState": {
+      "id": "wf_mq94sjn3_yp77yo",
+      "docId": "doc_test_countersign_002",
+      "configId": "cfg_mq92fj1q_f78yn0",
+      "configVersion": 1,
+      "currentStage": "second_review",
+      "currentStageName": "复审",
+      "stages": [
+        {
+          "stageType": "draft",
+          "stageName": "草稿",
+          "approvals": [],
+          "status": "completed",
+          "startedAt": "2026-06-11T06:43:16.719Z",
+          "completedAt": "2026-06-11T06:43:16.792Z"
+        },
+        {
+          "stageType": "first_review",
+          "stageName": "初审",
+          "approvals": [
+            {
+              "reviewerId": "user_reviewer1",
+              "reviewerName": "??",
+              "reviewerRole": "reviewer_l1",
+              "decision": "approved",
+              "comment": "????",
+              "id": "apr_mq94sjqf_i0qrx8",
+              "decidedAt": "2026-06-11T06:43:16.839Z"
+            }
+          ],
+          "status": "completed",
+          "startedAt": "2026-06-11T06:43:16.792Z",
+          "completedAt": "2026-06-11T06:43:16.847Z"
+        },
+        {
+          "stageType": "second_review",
+          "stageName": "复审",
+          "approvals": [
+            {
+              "reviewerId": "user_reviewer2",
+              "reviewerName": "??",
+              "reviewerRole": "reviewer_l2",
+              "decision": "approved",
+              "comment": "????,?????",
+              "id": "apr_mq94t3re_9xvnqd",
+              "decidedAt": "2026-06-11T06:43:42.794Z"
+            }
+          ],
+          "status": "in_progress",
+          "startedAt": "2026-06-11T06:43:16.847Z"
+        },
+        {
+          "stageType": "final_review",
+          "stageName": "终审",
+          "approvals": [],
+          "status": "pending"
+        }
+      ],
+      "status": "running",
+      "initiatorId": "user_test",
+      "initiatorName": "????",
+      "createdAt": "2026-06-11T06:43:16.719Z",
+      "updatedAt": "2026-06-11T06:43:42.794Z"
+    },
+    "afterState": {
+      "id": "wf_mq94sjn3_yp77yo",
+      "docId": "doc_test_countersign_002",
+      "configId": "cfg_mq92fj1q_f78yn0",
+      "configVersion": 1,
+      "currentStage": "final_review",
+      "currentStageName": "终审",
+      "stages": [
+        {
+          "stageType": "draft",
+          "stageName": "草稿",
+          "approvals": [],
+          "status": "completed",
+          "startedAt": "2026-06-11T06:43:16.719Z",
+          "completedAt": "2026-06-11T06:43:16.792Z"
+        },
+        {
+          "stageType": "first_review",
+          "stageName": "初审",
+          "approvals": [
+            {
+              "reviewerId": "user_reviewer1",
+              "reviewerName": "??",
+              "reviewerRole": "reviewer_l1",
+              "decision": "approved",
+              "comment": "????",
+              "id": "apr_mq94sjqf_i0qrx8",
+              "decidedAt": "2026-06-11T06:43:16.839Z"
+            }
+          ],
+          "status": "completed",
+          "startedAt": "2026-06-11T06:43:16.792Z",
+          "completedAt": "2026-06-11T06:43:16.847Z"
+        },
+        {
+          "stageType": "second_review",
+          "stageName": "复审",
+          "approvals": [
+            {
+              "reviewerId": "user_reviewer2",
+              "reviewerName": "??",
+              "reviewerRole": "reviewer_l2",
+              "decision": "approved",
+              "comment": "????,?????",
+              "id": "apr_mq94t3re_9xvnqd",
+              "decidedAt": "2026-06-11T06:43:42.794Z"
+            }
+          ],
+          "status": "completed",
+          "startedAt": "2026-06-11T06:43:16.847Z",
+          "completedAt": "2026-06-11T06:43:42.798Z"
+        },
+        {
+          "stageType": "final_review",
+          "stageName": "终审",
+          "approvals": [],
+          "status": "in_progress",
+          "startedAt": "2026-06-11T06:43:42.798Z"
+        }
+      ],
+      "status": "running",
+      "initiatorId": "user_test",
+      "initiatorName": "????",
+      "createdAt": "2026-06-11T06:43:16.719Z",
+      "updatedAt": "2026-06-11T06:43:42.798Z"
+    },
+    "comment": "从【复审】流转到【终审】，操作：approve",
+    "previousHash": "eff08575f1ab84671a2072e61f6e0d5b85fbfee09a6e77056fdb28f7bb8def5d",
+    "hash": "0df6426730197ee6119f7ead0a2a1e5fc6d339deebdd9b4fd87d0dfac735d209"
   }
 ]

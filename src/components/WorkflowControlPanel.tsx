@@ -14,17 +14,17 @@ import {
 import type { WorkflowInstance, WorkflowProgress, ReviewerRole } from '../types';
 import { useWorkflowStore } from '../store/workflowStore';
 import { useReviewStore } from '../store/reviewStore';
+import {
+  getStageName,
+  formatApprovalMode,
+  formatTime,
+} from '../utils/workflowUtils';
 
 interface WorkflowControlPanelProps {
   instance: WorkflowInstance;
   progress: WorkflowProgress;
   roles: ReviewerRole[];
 }
-
-const APPROVAL_MODES: Record<string, string> = {
-  all: '会签（所有人通过）',
-  any: '或签（任意一人通过）',
-};
 
 export function WorkflowControlPanel({ instance, progress, roles }: WorkflowControlPanelProps) {
   const { submitForReview, approve, reject, rollback, loading, error } = useWorkflowStore();
@@ -39,6 +39,22 @@ export function WorkflowControlPanel({ instance, progress, roles }: WorkflowCont
     () => progress.stages.find((s) => s.stageType === instance.currentStage),
     [progress, instance.currentStage]
   );
+
+  const stageConfig = useMemo(() => {
+    const stage = progress.stages.find((s) => s.stageType === instance.currentStage);
+    return {
+      reviewerRoles: currentStage?.stageType === 'draft'
+        ? ['author']
+        : currentStage?.stageType === 'first_review'
+        ? ['reviewer_l1']
+        : currentStage?.stageType === 'second_review'
+        ? ['reviewer_l2']
+        : currentStage?.stageType === 'final_review'
+        ? ['reviewer_final']
+        : [],
+      minApprovalCount: currentStage?.stageType === 'second_review' ? 1 : undefined,
+    };
+  }, [instance.currentStage, progress, currentStage]);
 
   const isDraft = instance.currentStage === 'draft';
   const isCompleted = instance.status === 'completed';
@@ -177,24 +193,18 @@ export function WorkflowControlPanel({ instance, progress, roles }: WorkflowCont
           <div className="grid grid-cols-2 gap-2 text-xs">
             <div>
               <span className="text-slate-400">阶段：</span>
-              <span className="font-medium text-slate-700">{currentStage.stageName}</span>
+              <span className="font-medium text-slate-700">{getStageName(currentStage.stageType)}</span>
             </div>
             <div>
               <span className="text-slate-400">审批模式：</span>
               <span className="font-medium text-slate-700">
-                {currentStage.approvals.length > 1 ? APPROVAL_MODES.all : APPROVAL_MODES.any}
+                {formatApprovalMode(stageConfig?.minApprovalCount !== undefined ? 'all' : 'any', stageConfig?.minApprovalCount)}
               </span>
             </div>
             <div className="col-span-2">
               <span className="text-slate-400">审批角色：</span>
               <span className="font-medium text-slate-700">
-                {currentStage.stageType === 'draft'
-                  ? '文档作者'
-                  : currentStage.stageType === 'first_review'
-                  ? '一级审阅人'
-                  : currentStage.stageType === 'second_review'
-                  ? '二级审阅人'
-                  : '终审人'}
+                {stageConfig?.reviewerRoles.map((r) => roleMap[r]?.name || r).join('、') || '—'}
               </span>
             </div>
           </div>
@@ -239,7 +249,7 @@ export function WorkflowControlPanel({ instance, progress, roles }: WorkflowCont
                     {a.comment && <p className="mt-0.5 text-xs text-slate-500">{a.comment}</p>}
                     {a.decidedAt && (
                       <p className="mt-0.5 text-[10px] text-slate-400">
-                        {new Date(a.decidedAt).toLocaleString('zh-CN')}
+                        {formatTime(a.decidedAt)}
                       </p>
                     )}
                   </div>
@@ -314,6 +324,7 @@ export function WorkflowControlPanel({ instance, progress, roles }: WorkflowCont
           <button
             onClick={handleSubmit}
             disabled={loading}
+            onFocus={() => setActionType('submit')}
             className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-md bg-[#1e3a5f] px-4 py-2 text-sm font-medium text-white hover:bg-[#2e4e7a] disabled:opacity-60"
           >
             {loading ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
@@ -326,6 +337,7 @@ export function WorkflowControlPanel({ instance, progress, roles }: WorkflowCont
             <button
               onClick={handleApprove}
               disabled={loading}
+              onFocus={() => setActionType('approve')}
               className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-60"
             >
               {loading ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle2 size={14} />}
@@ -334,6 +346,7 @@ export function WorkflowControlPanel({ instance, progress, roles }: WorkflowCont
             <button
               onClick={handleReject}
               disabled={loading}
+              onFocus={() => setActionType('reject')}
               className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-60"
             >
               {loading ? <Loader2 size={14} className="animate-spin" /> : <XCircle size={14} />}
@@ -346,6 +359,7 @@ export function WorkflowControlPanel({ instance, progress, roles }: WorkflowCont
           <button
             onClick={handleRollback}
             disabled={loading}
+            onFocus={() => setActionType('rollback')}
             className="inline-flex items-center justify-center gap-1.5 rounded-md border border-amber-300 bg-amber-50 px-4 py-2 text-sm font-medium text-amber-700 hover:bg-amber-100 disabled:opacity-60"
           >
             <Undo2 size={14} />
@@ -359,7 +373,7 @@ export function WorkflowControlPanel({ instance, progress, roles }: WorkflowCont
           <Info size={10} />
           <span>
             流程发起人：{instance.initiatorName} · 创建于{' '}
-            {new Date(instance.createdAt).toLocaleDateString('zh-CN')}
+            {formatTime(instance.createdAt)}
           </span>
         </div>
       </div>

@@ -108,6 +108,19 @@ router.get('/instances/:id/transitions', async (req, res, next) => {
   }
 });
 
+router.get('/instances/:id/approval-status', async (req, res, next) => {
+  try {
+    const status = await WorkflowEngineService.getApprovalStatus(req.params.id);
+    if (!status) {
+      res.status(404).json({ error: '工作流实例不存在' });
+      return;
+    }
+    res.json(status);
+  } catch (e) {
+    next(e);
+  }
+});
+
 router.get('/instances/:id/audit-log', async (req, res, next) => {
   try {
     const logs = await AuditLogService.listByInstance(req.params.id);
